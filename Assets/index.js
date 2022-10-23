@@ -1,8 +1,7 @@
 var quiz = document.getElementById("quiz");
-var state ={
-    correct: 0,
-    incorrect: 0
-}
+var totalCorrect = 0;
+var totalWrong =0;
+var AKA=''
 var currentQuestion = 0;
 var questions = [
     {
@@ -17,16 +16,16 @@ var questions = [
     title: "Which is better?",
     answers: [
             { answer: 4, correct: false },
-            { answer: 5, correct: false },
-            { answer: 6, correct: true },
+            { answer: 5, correct: true },
+            { answer: 6, correct: false },
         ]
     },
     {
         title: "Which is better?",
         answers: [
                 { answer: 'js', correct: true },
-                { answer: 'Python', correct: true },
-                { answer: 'GoLang', correct: true },
+                { answer: 'Python', correct: false },
+                { answer: 'GoLang', correct: false },
             ]
         }
 ]
@@ -42,15 +41,52 @@ function questionPage(question) {
     <li><button class="clickers" id="answerThree" data-correct="${question.answers[2].correct}">${question.answers[2].answer}</button>
     </ul>
     `
-    document
-    .getElementById("answerOne, answerTwo, answerThree")
-    .addEventListener(
-        'click', 
-        function () {
-        currentQuestion++
-        questionPage(questions[currentQuestion]);
-    })
+    // document
+    // .getElementById("answerOne, answerTwo, answerThree")
+    // .addEventListener(
+    //     'click', 
+    //     function () {
+    //     currentQuestion++
+    //     questionPage(questions[currentQuestion]);
+    // })
 
+    document
+    .querySelectorAll('.clickers')
+    .forEach(item => (item.addEventListener(
+        'click', 
+        function() {
+            currentQuestion++;
+            if (data-correct){
+                totalCorrect++
+            }
+            else if(!data-correct){
+                totalWrong++
+            }
+            if (currentQuestion < 3){ 
+                questionPage(questions[currentQuestion]);
+            }
+            else if (currentQuestion = 3)
+            {
+                gameOver() 
+            }
+        }
+    )
+    )
+    )
+}
+
+function gameOver() {
+    quiz.innerHTML = /*html*/ `
+    <p>
+    My Quiz
+    </p>
+    <form>
+  <label for="intials">Put Initlas Here:</label><br>
+  <input type="text" id="intials" name="initlas"><br>
+</form>
+    `
+
+    AKA = document.getElementById("intials").value;
 }
 
 function homepage() {
@@ -61,7 +97,8 @@ function homepage() {
     <button id="startQuiz">Start Quiz</button>
     `
 
-    document.getElementById("startQuiz")
+    document
+    .getElementById("startQuiz")
     .addEventListener(
         'click', 
         function () {
