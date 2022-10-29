@@ -1,8 +1,10 @@
 var quiz = document.getElementById("quiz");
 var totalCorrect = 0;
 var totalWrong =0;
-var AKA=''
+var AKA='killer'
+var highScore=[]//array to build multi high score list
 var currentQuestion = 0;
+var bamTime = 30;
 var questions = [
     {
     title: "Which is best?",
@@ -21,16 +23,31 @@ var questions = [
         ]
     },
     {
-        title: "Which is better?",
+    title: "Which is better?",
         answers: [
-                { answer: 'js', correct: true },
-                { answer: 'Python', correct: false },
-                { answer: 'GoLang', correct: false },
+            { answer: 'js', correct: true },
+            { answer: 'Python', correct: false },
+            { answer: 'GoLang', correct: false },
             ]
         }
 ]
 
+function curTime(){
+    document.getElementById('counter').innerHTML= bamTime;
+    bamTime--;
+    if (bamTime<0){
+        alert('You Lose');
+        gameOver();
+    }
+    else{
+        setTimeout(bamTime, 1000)
+    }
+}
+
 function questionPage(question) {
+
+    curTime()
+
     quiz.innerHTML = /*html*/`
     <p>
     ${question.title}
@@ -50,43 +67,94 @@ function questionPage(question) {
     //     questionPage(questions[currentQuestion]);
     // })
 
+    // Playing around with a different way to get if answer is correct
+    //     var fort = function isCorrect(torf){
+    //     return torf;
+
+    // }
+
     document
     .querySelectorAll('.clickers')
     .forEach(item => (item.addEventListener(
         'click', 
         function() {
-            currentQuestion++;
-            if (data-correct){
-                totalCorrect++
+            var spitting = $(this).data('correct')
+
+
+
+            if (spitting === true && bamTime !== 0){
+                totalCorrect++;
+                // used to check if working
+                // console.log(totalCorrect)
+                // console.log(spitting)
+                currentQuestion++;
+                if (currentQuestion == 3 || bamTime == 0)
+                {
+                    gameOver() 
+                }
+                else{
+                    questionPage(questions[currentQuestion])
+                }
             }
-            else if(!data-correct){
-                totalWrong++
+            if(spitting === false && bamTime !== 0){
+                totalWrong++;
+                questionPage(questions[currentQuestion])
+                // used to check if working
+                // console.log(spitting)
+                // console.log(totalWrong)
             }
-            if (currentQuestion < 3){ 
-                questionPage(questions[currentQuestion]);
-            }
-            else if (currentQuestion = 3)
-            {
-                gameOver() 
-            }
+            // if (currentQuestion < 2){ 
+            //     currentQuestion++;
+            //     questionPage(questions[currentQuestion]);
+            // }
         }
     )
     )
     )
 }
 
+function highScorePage() {
+    // Creating a high score page to live outside of game/quiz where you can see the list before starting game/quiz
+    quiz.innerHTML = /*html*/ `
+    <p>
+    High Scores
+    </p>
+    <ul id="myList">
+    <li class="clickers" id="rank1">" ${AKA} Score: right ${totalCorrect} and wrong ${totalWrong}"</li>
+    </ul>
+    `
+
+    //want to set to image for fun at some point
+    document.getElementById("myList").style.listStyle = "square inside";
+}
+
 function gameOver() {
     quiz.innerHTML = /*html*/ `
     <p>
-    My Quiz
+    Game Over
     </p>
-    <form>
-  <label for="intials">Put Initlas Here:</label><br>
-  <input type="text" id="intials" name="initlas"><br>
-</form>
+    <body>
+    <input type="text" id="myInput">
+    <button type="button" id="myBtn"> Show Value</button>
+
+    </body>
+
     `
 
-    AKA = document.getElementById("intials").value;
+$(document).ready(function(){
+    // Get value on button click and show alert
+    $("#myBtn").click(function(){
+        var str = $("#myInput").val();
+        localStorage.setItem('initals', str);
+        alert("Cool Name Bro");
+        AKA = str
+        highScorePage()
+    });
+
+    //used for checking values
+    //console.log(AKA)
+
+})
 }
 
 function homepage() {
@@ -105,18 +173,5 @@ function homepage() {
         questionPage(questions[currentQuestion]);
     });
 }
-
-// function questionPage() {
-//     quiz.innerHTML = /*html*/ `
-//     <p>
-//         Question 1
-//     </p>
-//     <ul>
-//         <li>
-//         <button>This Option</button>
-//         </li>
-//     </ul>
-//     `;
-// }
 
 homepage();
